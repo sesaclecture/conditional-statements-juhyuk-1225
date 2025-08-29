@@ -46,42 +46,78 @@ users = {
         "role": Role.ADMIN
     }
 }
+run = True
+while run:
+    mode = input('SignUp:1, Login:2 > ')
 
-
-mode = input('SignUp:1, Login:2 > ')
-
-if mode == '1':
-    new_id = input('new id: ')
-    if new_id in users:
-        print('id already exists')
-    else:
-        new_name = input('name: ')
-        new_birth = input('birth(YYYYMMDD): ')
-
-        if new_birth.isdigit() and len(new_birth) == 8:
-            if "19000101" <= new_birth <= "20250829":
-                valid = True
+    if mode == '1':
+        new_id = input('new id: ')
+        if new_id in users:
+            print('id already exists')
+        else:
+            new_name = input('name: ')
+            new_year, new_month, new_day = input('birth(YYYY MM DD): ').split()
+            new_birth = new_year+new_month+new_day
+            new_year = int(new_year)
+            new_month = int(new_month)
+            new_day = int(new_day)
+            days = [31,28,31,30,31,30,31,31,30,31,30,31]
+            month = [1,2,3,4,5,6,7,8,9,10,11,12]
+            if new_birth.isdigit() and len(new_birth) == 8:
+                if 1900 <= new_year <= 2025:
+                    if 1<=new_month<=12:
+                        if 0<new_day <= days[int(new_month)-1]:
+                            if new_year % 4 == 0:
+                                if new_month == 2:
+                                    if new_day<=29:
+                                        valid = True
+                                    else:
+                                        valid = False
+                                else:
+                                    valid = True
+                            else:
+                                valid = True
+                        else:
+                            valid = False
+                    else:
+                        valid = False                 
+                else:
+                    valid = False
             else:
                 valid = False
-        else:
-            valid = False
 
-        if not valid:
-            print('invalid birth date')
-        else:
-            new_pass = input('new pass (>=3): ')
-            if len(new_pass) < 3:
-                print('password too short')
+            if not valid:
+                print('invalid birth date')
             else:
-                users[new_id] = {
-                    "name": new_name if new_name != "" else new_id,
-                    "birth": new_birth,
-                    "id": new_id,
-                    "password": new_pass,
-                    "role": Role.VIEWER
-                }
-                todolist[new_id] = {}
-                print('Sign up success')
+                in_pass = ['!','@','#','$','%']
+                new_pass = input(f'new pass (>=3, {in_pass}): ')            
+                if len(new_pass) < 3:
+                    print('password too short')
+
+                else:
+                    for i in in_pass:
+                        if i in new_pass:
+                            users[new_id] = {
+                                "name": new_name if new_name != "" else new_id,
+                                "birth": new_birth,
+                                "id": new_id,
+                                "password": new_pass,
+                                "role": Role.VIEWER
+                            }
+                            todolist[new_id] = {}
+                            print('Sign up success')
+                            break
+                            
+                        else:
+                            print(f'password must in {in_pass}')
+    elif mode == "2":
+        run = False
+    
+    else:
+        print('')
+                            
+
+                
 
 
 login = input('id, pass > ').split()
